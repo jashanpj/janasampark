@@ -12,7 +12,7 @@ export interface JWTPayload {
   isApproved: boolean
 }
 
-// Password hashing functions
+// Password hashing functions.
 export const hashPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, 10)
 }
