@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git add:*)",
       "Bash(npx prisma:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(vercel deploy:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }

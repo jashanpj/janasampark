@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
       userId: 'test-user-id',
       username: 'testuser',
       role: 'WARD_MEMBER',
+      isApproved: true,
     })
 
     const response = NextResponse.json({

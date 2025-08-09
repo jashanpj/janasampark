@@ -8,7 +8,11 @@ import {
   SEX_OPTIONS, 
   EDUCATION_OPTIONS,
   RELIGION_OPTIONS,
-  CASTE_OPTIONS,
+  HINDU_CASTE_OPTIONS,
+  CHRISTIAN_CASTE_OPTIONS,
+  ISLAM_CASTE_OPTIONS,
+  CATEGORY_OPTIONS,
+  LOCAL_BODIES,
   JOB_OPTIONS 
 } from '@/lib/constants'
 
@@ -111,6 +115,20 @@ export default function EditSurveyPage() {
       [e.target.name]: e.target.value
     }))
     setError('')
+  }
+
+  // Get caste options based on selected religion
+  const getCasteOptions = () => {
+    switch (formData.religion) {
+      case 'Hindu':
+        return HINDU_CASTE_OPTIONS
+      case 'Christian':
+        return CHRISTIAN_CASTE_OPTIONS
+      case 'Islam':
+        return ISLAM_CASTE_OPTIONS
+      default:
+        return []
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -367,7 +385,7 @@ export default function EditSurveyPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 >
                   <option value="">Select caste</option>
-                  {CASTE_OPTIONS.map((option) => (
+                  {getCasteOptions().map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>

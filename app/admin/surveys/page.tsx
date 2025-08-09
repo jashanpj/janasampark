@@ -42,7 +42,9 @@ export default function AdminSurveysPage() {
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
-    totalCount: 0
+    totalCount: 0,
+    hasNext: false,
+    hasPrev: false
   })
   const router = useRouter()
 
