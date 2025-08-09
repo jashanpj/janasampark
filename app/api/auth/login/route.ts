@@ -33,7 +33,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('✅ API LOGIN: User found:', user.username, 'Role:', user.role)
+    console.log('✅ API LOGIN: User found:', user.username, 'Role:', user.role, 'Approved:', user.isApproved)
+
+    // Check if user is approved
+    if (!user.isApproved) {
+      console.log('❌ API LOGIN: User not approved:', username)
+      return NextResponse.json(
+        { error: 'Account pending approval. Please wait for admin approval.' },
+        { status: 403 }
+      )
+    }
 
     // Verify password
     console.log('🔑 API LOGIN: Verifying password')
@@ -54,6 +63,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       username: user.username,
       role: user.role,
+      isApproved: user.isApproved,
     })
     console.log('✅ API LOGIN: JWT token generated, length:', token.length)
 
@@ -67,6 +77,7 @@ export async function POST(request: NextRequest) {
           name: user.name,
           username: user.username,
           role: user.role,
+          isApproved: user.isApproved,
           wardNumber: user.wardNumber,
           localBody: user.localBody,
         },

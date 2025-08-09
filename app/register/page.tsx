@@ -70,12 +70,12 @@ export default function RegisterPage() {
 
       if (response.ok) {
         console.log('✅ REGISTER: Registration successful')
-        setSuccess('Registration successful! Redirecting to login...')
-        console.log('🧭 NAVIGATION: Will redirect to /login in 2 seconds (reason: registration successful)')
+        setSuccess('Registration successful! Your account is pending admin approval. You will be notified once approved.')
+        console.log('🧭 NAVIGATION: Will redirect to /login in 3 seconds (reason: registration successful - pending approval)')
         setTimeout(() => {
           console.log('🧭 NAVIGATION: Executing redirect to /login')
           router.push('/login')
-        }, 2000)
+        }, 3000)
       } else {
         console.log('❌ REGISTER: Registration failed:', data.error || 'Registration failed')
         setError(data.error || 'Registration failed')
@@ -95,6 +95,11 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Register</h1>
           <p className="text-gray-600">Create your JanaSampark account</p>
+          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              <strong>Note:</strong> Your account will require admin approval before you can login and access the system.
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

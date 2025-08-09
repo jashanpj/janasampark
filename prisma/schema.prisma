@@ -16,7 +16,8 @@ model User {
   username    String   @unique
   password    String
   phone       String
-  role        UserRole
+  role        UserRole @default(USER)
+  isApproved  Boolean  @default(false)
   wardNumber  Int
   localBody   String
   createdAt   DateTime @default(now())
@@ -24,6 +25,9 @@ model User {
   
   // Relations
   surveys     Survey[]
+  approvedBy  String?
+  approver    User?    @relation("UserApprovals", fields: [approvedBy], references: [id])
+  approvedUsers User[] @relation("UserApprovals")
 
   @@map("users")
 }
@@ -52,8 +56,11 @@ model Survey {
 }
 
 enum UserRole {
+  USER
   WARD_MEMBER
   WARD_SECRETARY
+  ADMIN
+  SUPER_ADMIN
 }
 
 enum PoliticalAffiliation {

@@ -9,6 +9,7 @@ export interface JWTPayload {
   userId: string
   username: string
   role: string
+  isApproved: boolean
 }
 
 // Password hashing functions
@@ -54,11 +55,17 @@ export const getAuthUser = async (request: NextRequest) => {
         name: true,
         username: true,
         role: true,
+        isApproved: true,
         wardNumber: true,
         localBody: true,
         createdAt: true,
       },
     })
+
+    // Check if user is approved
+    if (!user?.isApproved) {
+      return null
+    }
 
     return user
   } catch (error) {
@@ -75,6 +82,40 @@ export const requireAuth = async (request: NextRequest) => {
       JSON.stringify({ error: 'Authentication required' }),
       { 
         status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+
+  return user
+}
+
+// Admin authorization helper
+export const requireAdmin = async (request: NextRequest) => {
+  const user = await getAuthUser(request)
+  
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
+    return new Response(
+      JSON.stringify({ error: 'Admin access required' }),
+      { 
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+
+  return user
+}
+
+// Super admin authorization helper
+export const requireSuperAdmin = async (request: NextRequest) => {
+  const user = await getAuthUser(request)
+  
+  if (!user || user.role !== 'SUPER_ADMIN') {
+    return new Response(
+      JSON.stringify({ error: 'Super admin access required' }),
+      { 
+        status: 403,
         headers: { 'Content-Type': 'application/json' }
       }
     )

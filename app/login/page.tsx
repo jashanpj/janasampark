@@ -27,9 +27,16 @@ export default function LoginPage() {
         
         if (response.ok) {
           const data = await response.json()
-          console.log('✅ LOGIN PAGE: User already authenticated:', data.user?.username)
-          console.log('🧭 NAVIGATION: Redirecting to /dashboard (reason: already authenticated)')
-          router.push('/dashboard')
+          console.log('✅ LOGIN PAGE: User already authenticated:', data.user?.username, 'Role:', data.user?.role)
+          
+          // Redirect based on user role
+          if (data.user?.role === 'ADMIN' || data.user?.role === 'SUPER_ADMIN') {
+            console.log('🧭 NAVIGATION: Redirecting to /admin (reason: admin user already authenticated)')
+            router.push('/admin')
+          } else {
+            console.log('🧭 NAVIGATION: Redirecting to /dashboard (reason: regular user already authenticated)')
+            router.push('/dashboard')
+          }
         } else {
           console.log('🔍 LOGIN PAGE: User not authenticated, staying on login page')
         }
@@ -73,13 +80,22 @@ export default function LoginPage() {
       console.log('🔑 LOGIN: API Response Data:', data)
 
       if (response.ok) {
-        console.log('✅ LOGIN: Login successful, preparing to redirect to dashboard')
-        console.log('🧭 NAVIGATION: Redirecting to /dashboard (reason: successful login)')
-        // Small delay to ensure cookie is processed, then redirect
-        setTimeout(() => {
-          console.log('🧭 NAVIGATION: Executing redirect to /dashboard')
-          window.location.href = '/dashboard'
-        }, 100)
+        console.log('✅ LOGIN: Login successful, preparing to redirect based on user role')
+        
+        // Redirect based on user role
+        if (data.user?.role === 'ADMIN' || data.user?.role === 'SUPER_ADMIN') {
+          console.log('🧭 NAVIGATION: Redirecting to /admin (reason: successful admin login)')
+          setTimeout(() => {
+            console.log('🧭 NAVIGATION: Executing redirect to /admin')
+            window.location.href = '/admin'
+          }, 100)
+        } else {
+          console.log('🧭 NAVIGATION: Redirecting to /dashboard (reason: successful user login)')
+          setTimeout(() => {
+            console.log('🧭 NAVIGATION: Executing redirect to /dashboard')
+            window.location.href = '/dashboard'
+          }, 100)
+        }
       } else {
         console.log('❌ LOGIN: Login failed:', data.error || 'Login failed')
         setError(data.error || 'Login failed')

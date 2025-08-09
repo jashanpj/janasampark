@@ -35,9 +35,21 @@ interface Survey {
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null)
   const [surveys, setSurveys] = useState<Survey[]>([])
+  const [filteredSurveys, setFilteredSurveys] = useState<Survey[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      router.push('/login')
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +71,15 @@ export default function DashboardPage() {
         }
         
         const authData = await authResponse.json()
-        console.log('✅ DASHBOARD: Authentication successful for user:', authData.user?.username)
+        console.log('✅ DASHBOARD: Authentication successful for user:', authData.user?.username, 'Role:', authData.user?.role)
+        
+        // Redirect admins to their admin dashboard
+        if (authData.user?.role === 'ADMIN' || authData.user?.role === 'SUPER_ADMIN') {
+          console.log('🧭 NAVIGATION: Redirecting admin to /admin (reason: admin accessing user dashboard)')
+          router.push('/admin')
+          return
+        }
+        
         setUser(authData.user)
 
         // Fetch surveys
@@ -73,6 +93,7 @@ export default function DashboardPage() {
           const surveysData = await surveysResponse.json()
           console.log('✅ DASHBOARD: Successfully loaded', surveysData.surveys?.length || 0, 'surveys')
           setSurveys(surveysData.surveys)
+          setFilteredSurveys(surveysData.surveys)
         } else {
           console.log('❌ DASHBOARD: Failed to load surveys')
           setError('Failed to load surveys')
@@ -90,20 +111,22 @@ export default function DashboardPage() {
     fetchData()
   }, [router])
 
-  const handleLogout = async () => {
-    try {
-      console.log('🔓 LOGOUT: Starting logout process')
-      const response = await fetch('/api/auth/logout', { 
-        method: 'POST',
-        credentials: 'include'
-      })
-      console.log('🔓 LOGOUT: API response:', response.status, response.statusText)
-      console.log('🧭 NAVIGATION: Redirecting to /login (reason: user logout)')
-      router.push('/login')
-    } catch (error) {
-      console.log('❌ LOGOUT: Logout error:', error)
+  // Filter surveys based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredSurveys(surveys)
+    } else {
+      const filtered = surveys.filter(survey =>
+        survey.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
+      )
+      setFilteredSurveys(filtered)
     }
+  }, [surveys, searchQuery])
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
   }
+
 
   const deleteSurvey = async (surveyId: string) => {
     if (!confirm('Are you sure you want to delete this survey?')) {
@@ -188,7 +211,7 @@ export default function DashboardPage() {
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-medium text-gray-900 mb-2 sm:mb-0">
-                Survey Records ({surveys.length})
+                Survey Records ({filteredSurveys.length} of {surveys.length})
               </h2>
               <Link
                 href="/surveys/new"
@@ -196,6 +219,16 @@ export default function DashboardPage() {
               >
                 Add New Survey
               </Link>
+            </div>
+            {/* Search Input */}
+            <div className="mt-4">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search surveys by name..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
           </div>
 
@@ -205,7 +238,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {surveys.length === 0 ? (
+          {filteredSurveys.length === 0 && surveys.length === 0 ? (
             <div className="p-6 text-center">
               <p className="text-gray-500 mb-4">No surveys found. Create your first survey to get started.</p>
               <Link
@@ -215,9 +248,13 @@ export default function DashboardPage() {
                 Create Survey
               </Link>
             </div>
+          ) : filteredSurveys.length === 0 ? (
+            <div className="p-6 text-center">
+              <p className="text-gray-500 mb-4">No surveys found matching your search.</p>
+            </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {surveys.map((survey) => (
+              {filteredSurveys.map((survey) => (
                 <div key={survey.id} className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex-1 mb-4 sm:mb-0">

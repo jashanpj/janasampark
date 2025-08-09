@@ -48,6 +48,16 @@ export default function EditSurveyPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const params = useParams()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      router.push('/login')
+    }
+  }
   const surveyId = params.id as string
 
   useEffect(() => {
@@ -163,12 +173,20 @@ export default function EditSurveyPage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href={`/surveys/${surveyId}`}
-            className="text-blue-600 hover:text-blue-700 font-medium flex items-center mb-4"
-          >
-            ← Back to Survey
-          </Link>
+          <div className="flex justify-between items-center mb-4">
+            <Link
+              href={`/surveys/${surveyId}`}
+              className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+            >
+              ← Back to Survey
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Edit Survey</h1>
           <p className="text-gray-600 mt-2">Update survey information</p>
         </div>
