@@ -5,7 +5,8 @@ export const LOCAL_BODIES = [
   "Ezhikkara",
   "Chittattukara",
   "Vadakkekara",
-  "Chendamangalam"
+  "Chendamangalam",
+  "Puthanvelikkara"
 ] as const
 
 export const POLITICAL_AFFILIATIONS = [
