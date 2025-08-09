@@ -14,6 +14,8 @@ interface Survey {
   politicalAffiliation: string
   religion: string
   caste: string
+  customCaste?: string
+  category: string
   sex: string
   createdAt: string
   updatedAt: string
@@ -188,7 +190,17 @@ export default function SurveyViewPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Caste</label>
-                  <p className="text-gray-900">{survey.caste}</p>
+                  <p className="text-gray-900">
+                    {survey.caste === 'Other' && survey.customCaste 
+                      ? survey.customCaste 
+                      : survey.caste
+                    }
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <p className="text-gray-900">{survey.category}</p>
                 </div>
 
                 <div>

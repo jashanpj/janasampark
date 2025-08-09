@@ -8,7 +8,11 @@ import {
   SEX_OPTIONS, 
   EDUCATION_OPTIONS,
   RELIGION_OPTIONS,
-  CASTE_OPTIONS,
+  HINDU_CASTE_OPTIONS,
+  CHRISTIAN_CASTE_OPTIONS,
+  ISLAM_CASTE_OPTIONS,
+  OTHER_RELIGION_CASTE_OPTIONS,
+  CATEGORY_OPTIONS,
   JOB_OPTIONS 
 } from '@/lib/constants'
 
@@ -22,6 +26,8 @@ export default function NewSurveyPage() {
     politicalAffiliation: '',
     religion: '',
     caste: '',
+    customCaste: '',
+    category: '',
     sex: '',
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -45,11 +51,27 @@ export default function NewSurveyPage() {
   }, [router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value,
+      // Reset caste when religion changes
+      ...(name === 'religion' && { caste: '', customCaste: '' })
     }))
     setError('')
+  }
+
+  const getCasteOptions = () => {
+    switch (formData.religion) {
+      case 'Hindu':
+        return HINDU_CASTE_OPTIONS
+      case 'Christian':
+        return CHRISTIAN_CASTE_OPTIONS
+      case 'Islam':
+        return ISLAM_CASTE_OPTIONS
+      default:
+        return OTHER_RELIGION_CASTE_OPTIONS
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -271,13 +293,52 @@ export default function NewSurveyPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 >
                   <option value="">Select caste</option>
-                  {CASTE_OPTIONS.map((option) => (
+                  {getCasteOptions().map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>
                   ))}
                 </select>
               </div>
+            </div>
+
+            {formData.caste === 'Other' && (
+              <div>
+                <label htmlFor="customCaste" className="block text-sm font-medium text-gray-700 mb-2">
+                  Please specify caste *
+                </label>
+                <input
+                  type="text"
+                  id="customCaste"
+                  name="customCaste"
+                  value={formData.customCaste}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your caste"
+                />
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                Category *
+              </label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              >
+                <option value="">Select category</option>
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {error && (

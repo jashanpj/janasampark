@@ -66,14 +66,24 @@ export async function POST(request: NextRequest) {
       phone, 
       politicalAffiliation, 
       religion, 
-      caste, 
+      caste,
+      customCaste,
+      category,
       sex 
     } = body
 
     // Validation
-    if (!name || !age || !education || !job || !phone || !politicalAffiliation || !religion || !caste || !sex) {
+    if (!name || !age || !education || !job || !phone || !politicalAffiliation || !religion || !caste || !category || !sex) {
       return NextResponse.json(
         { error: 'All fields are required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate custom caste if caste is 'Other'
+    if (caste === 'Other' && !customCaste) {
+      return NextResponse.json(
+        { error: 'Custom caste is required when selecting Other' },
         { status: 400 }
       )
     }
@@ -121,6 +131,8 @@ export async function POST(request: NextRequest) {
         politicalAffiliation,
         religion,
         caste,
+        customCaste: caste === 'Other' ? customCaste : null,
+        category,
         sex,
         createdBy: user.id,
       },

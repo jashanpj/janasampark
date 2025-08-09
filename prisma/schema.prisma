@@ -38,6 +38,8 @@ model Survey {
   politicalAffiliation PoliticalAffiliation
   religion            String
   caste               String
+  customCaste         String?
+  category            String?
   sex                 Sex
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt

@@ -43,17 +43,53 @@ export const EDUCATION_OPTIONS = [
 
 export const RELIGION_OPTIONS = [
   "Hindu",
-  "Muslim",
   "Christian",
+  "Islam",
   "Sikh",
   "Buddhist",
   "Jain",
   "Others"
 ] as const
 
-export const CASTE_OPTIONS = [
+export const HINDU_CASTE_OPTIONS = [
+  "Ezhava",
+  "Nair",
+  "Araya",
+  "Vettuvan",
+  "Pulaya",
+  "Ulladan",
+  "Vishwakarma",
+  "Tamil Brahmins",
+  "Malayalam Brahmins",
+  "Gowda Saraswatha Brahmins (Konkani)",
+  "Other"
+] as const
+
+export const CHRISTIAN_CASTE_OPTIONS = [
+  "Latin Catholic",
+  "Roman Catholic",
+  "Jacobite Orthodox",
+  "Jehovah's Witnesses",
+  "Pentecostal",
+  "Other"
+] as const
+
+export const ISLAM_CASTE_OPTIONS = [
+  "Muslim",
+  "Rawther",
+  "Mappila",
+  "Ossan",
+  "Other"
+] as const
+
+export const OTHER_RELIGION_CASTE_OPTIONS = [
+  "Other"
+] as const
+
+export const CATEGORY_OPTIONS = [
   "General",
   "OBC",
+  "OEC",
   "SC",
   "ST",
   "Others"
